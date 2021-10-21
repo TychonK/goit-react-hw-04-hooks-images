@@ -1,47 +1,39 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react'
 import { FetchPhotos } from '../searchService';
 
-export class Searchbar extends Component {
-    state = {
-        query: '',
-        page: 1,
-    }
+export function Searchbar({addImages, loadMore, givenPage, annulePage, isLoading}) {
+    const [query, setQuery] = useState('')
+    const [page, setPage] = useState(1)
 
-    async componentDidUpdate() {
-        if (this.state.page != this.props.page) {
-           await this.setState({ page: this.props.page, })
-            let isLoading = true;
-            this.props.isLoading(isLoading)
+    useEffect(async() => {
+       if (page != givenPage) {
+           await setPage(givenPage)
+            isLoading(true)
             let newData;
-            await FetchPhotos(this.state.query, this.state.page).then((data) => { newData = data })
-            isLoading = false;
-            this.props.isLoading(isLoading)
-            this.props.loadMore(newData)
-        }
-    }
+            await FetchPhotos(query, page).then((data) => { newData = data })
+            isLoading(false);
+            loadMore(newData)
+        } 
+    }, [givenPage])
 
-    handleSearch = async(e) => {
+    const handleSearch = async(e) => {
         e.preventDefault()
 
         let initialPage = 1;
-        await this.props.annulePage(initialPage)
+        await annulePage(initialPage)
 
         let arrData;
-        await FetchPhotos(this.state.query, this.state.page).then((data) => { arrData = data })
-        this.props.addImages(arrData)
+        await FetchPhotos(query, page).then((data) => { arrData = data })
+        addImages(arrData)
     }
 
-    handleChange = (e) => {
-        this.setState({
-            query: e.target.value,
-           
-        })
+    const handleChange = (e) => {
+        setQuery(e.target.value)
     }
 
-    render() {
-        return (
+    return (
             <header className="Searchbar">
-            <form className="SearchForm" onSubmit={this.handleSearch}>
+            <form className="SearchForm" onSubmit={handleSearch}>
                 <button type="submit" className="SearchForm-button">
                 <span className="SearchForm-button-label">Search</span>
                 </button>
@@ -53,10 +45,9 @@ export class Searchbar extends Component {
                 autoComplete="off"
                 autoFocus
                         placeholder="Search images and photos"
-                        onChange={this.handleChange}
+                        onChange={handleChange}
                 />
             </form>
             </header> 
         )
-    }
 }

@@ -1,29 +1,25 @@
-import { Component } from 'react'
+import { useState, useEffect } from 'react'
 
-export class Button extends Component {
-    state = {
-        page: 1,
-    }
+export function Button({pageCount, givenPage}) {
+    const [page, setPage] = useState(1)
 
-    componentWillUpdate() {
-        if (this.state.page !== this.props.page) {
-            this.setState({page: this.props.page,})
+    useEffect(async () => {
+        if (page != givenPage) {
+            await setPage(givenPage)
         }
+    }, [givenPage])
+
+    const incrementPage = async() => {
+        await setPage(page + 1)
+        await pageCount(page)
     }
 
-    incrementPage = async() => {
-        await this.setState({ page: this.state.page + 1, })
-        this.props.pageCount(this.state.page)
-    }
-    
-    render() {
-        return (
+    return (
             <button
                 type="button"
                 className="Button"
-                onClick={this.incrementPage}
+                onClick={incrementPage}
             >Load More
             </button>
         )
-    }
 }
