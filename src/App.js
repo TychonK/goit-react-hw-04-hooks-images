@@ -23,7 +23,7 @@ export default function App() {
     const [bigImgUrl, setBigImgUrl] = useState('')
 
     useEffect(async() => {
-        setIsLoading(true)
+        await setIsLoading(true)
         let foundData;
         await FetchPhotos(query, page).then((data) => {foundData = data})
         setData(foundData)

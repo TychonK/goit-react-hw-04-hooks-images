@@ -4,7 +4,7 @@ export function Button({pageCount, givenPage}) {
     const [page, setPage] = useState(1)
 
     useEffect(async () => {
-        if (page != givenPage) {
+        if (page !== givenPage) {
             await setPage(givenPage)
         }
     }, [givenPage])
